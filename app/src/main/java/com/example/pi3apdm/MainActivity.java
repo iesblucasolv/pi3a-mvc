@@ -26,4 +26,36 @@ public class MainActivity extends AppCompatActivity {
     public void btnOnClickViewPrimeiroAcesso(View view){
         setContentView(R.layout.primeiro_acesso);
     }
+
+    public void btnOnClickViewMenu(View view){
+        setContentView(R.layout.menu);
+    }
+
+    public void btnOnClickViewVerAvisosVAlunos(View view){
+        setContentView(R.layout.ver_avisos_valunos);
+    }
+
+    public void btnOnClickViewVerAvisosVrofessores(View view){
+        setContentView(R.layout.ver_avisos_vprofessores);
+    }
+
+    public void btnOnClickViewVerResumosVAlunos(View view){
+        setContentView(R.layout.ver_resumos_valunos);
+    }
+
+    public void btnOnClickViewVerResumosVrofessores(View view){
+        setContentView(R.layout.ver_resumos_vprofessores);
+    }
+
+    public void btnOnClickViewEscreverAviso(View view){
+        setContentView(R.layout.escrever_aviso);
+    }
+
+    public void btnOnClickViewEscreverResumo(View view){
+        setContentView(R.layout.escrever_resumo);
+    }
+
+    public void btnOnClickViewLogin(View view){
+        setContentView(R.layout.activity_main);
+    }
 }
