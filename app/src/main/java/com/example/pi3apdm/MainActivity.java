@@ -1,6 +1,7 @@
 package com.example.pi3apdm;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,5 +21,9 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    public void btnOnClickViewPrimeiroAcesso(View view){
+        setContentView(R.layout.primeiro_acesso);
     }
 }
