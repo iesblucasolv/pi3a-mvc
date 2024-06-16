@@ -36,7 +36,7 @@ public class UsuarioDAO extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_TB_PROFESSORES = "CREATE TABLE "+ TB_USUARIOS + "(" + KEY_ID + "INTEGER PRIMARY KEY," + NOME + " TEXT," + MATRICULA + " TEXT," + SENHA + " TEXT," + ISAPROFESSOR + "INTEGER)";
+        String CREATE_TB_PROFESSORES = "CREATE TABLE "+ TB_USUARIOS + "(" + KEY_ID + " INTEGER PRIMARY KEY, " + NOME + " TEXT, " + MATRICULA + " TEXT, " + SENHA + " TEXT, " + ISAPROFESSOR + " INTEGER)";
         db.execSQL(CREATE_TB_PROFESSORES);
     }
 
@@ -68,14 +68,16 @@ public class UsuarioDAO extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuerySQL, null);
+        count = cursor.getCount();
         cursor.close();
+        db.close();
 
         // return count
-        return cursor.getCount();
+        return count;
     }
 
 
-    public List<UsuarioVO> getAllProfessores(){
+    public List<UsuarioVO> getAllUsuarios(){
         List<UsuarioVO> ltUsuarios = new ArrayList<UsuarioVO>();
         String SELECT_QUERY = "SELECT * FROM "+TB_USUARIOS;
         SQLiteDatabase db = this.getReadableDatabase();

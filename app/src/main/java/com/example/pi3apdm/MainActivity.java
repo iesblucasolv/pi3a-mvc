@@ -2,12 +2,24 @@ package com.example.pi3apdm;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.pi3apdm.dao.UsuarioDAO;
+import com.example.pi3apdm.model.UsuarioVO;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,8 +35,100 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    //variaveis
+
+    public boolean logado = false;
+
+
     public void btnOnClickViewPrimeiroAcesso(View view){
         setContentView(R.layout.primeiro_acesso);
+    }
+
+    public void btnOnClickViewVerifyLogin(View view){
+
+        UsuarioVO usuarioAPP = new UsuarioVO();
+
+        EditText matriculaEditText = (EditText) findViewById(R.id.editTextMatriculaLogin);
+        String LoginMatricula = matriculaEditText.getText().toString();
+        EditText senhaEditText = (EditText) findViewById(R.id.editTextSenhaLogin);
+        String LoginSenha = senhaEditText.getText().toString();
+
+        usuarioAPP.setMatricula(LoginMatricula);
+        usuarioAPP.setSenha(LoginSenha);
+
+        List<UsuarioVO> ltUsuarios = new ArrayList<UsuarioVO>();
+
+            UsuarioDAO usuarioBD = new UsuarioDAO(this);
+            ltUsuarios = usuarioBD.getAllUsuarios();
+        Toast.makeText(this, getString(usuarioBD.getCountUsuarios()), Toast.LENGTH_SHORT).show();
+            try{
+
+
+                if(usuarioBD.getCountUsuarios() != 0){
+                    for(int i = 0; i<usuarioBD.getCountUsuarios();i++){
+                        if(Objects.equals(ltUsuarios.get(i).getMatricula(), usuarioAPP.getMatricula()) || Objects.equals(ltUsuarios.get(i).getSenha(), usuarioAPP.getSenha())){
+                            logado = true;
+                        }
+                    }
+                }
+            }catch (Exception e){
+                Toast.makeText(this, "Erro", Toast.LENGTH_SHORT).show();
+            }
+
+
+
+            if(logado){
+                setContentView(R.layout.menu);
+            }
+
+
+    }
+
+    public void btnOnClickCadastrarPrimeiroAcesso(View view){
+
+        UsuarioVO usuarioAPP = new UsuarioVO();
+
+        EditText matriculaEditText = (EditText) findViewById(R.id.editTextMatriculaPrimeiroAcesso);
+        String PrimeiroAcessoMatricula = matriculaEditText.getText().toString();
+        EditText senhaEditText = (EditText) findViewById(R.id.editTextSenhaPrimeiroAcesso);
+        String PrimeiroAcessoSenha = senhaEditText.getText().toString();
+        EditText ConfirmarSenhaEditText = (EditText) findViewById(R.id.editTextConfirmarSenhaPrimeiroAcesso);
+        String PrimeiroAcessoConfirmarSenha = ConfirmarSenhaEditText.getText().toString();
+        EditText NomeEditText = (EditText) findViewById(R.id.editTextNomePrimeiroAcesso);
+        String PrimeiroAcessoNome = NomeEditText.getText().toString();
+
+        RadioGroup radioGroup = (RadioGroup)findViewById(R.id.radioGroupIsProfessor);
+
+        int selectedId = radioGroup.getCheckedRadioButtonId();
+        String selectedOption = "";
+        if (selectedId != -1) {
+            RadioButton selectedRadioButton = findViewById(selectedId);
+            selectedOption = selectedRadioButton.getText().toString();
+        }
+        //Toast.makeText(this, selectedOption, Toast.LENGTH_SHORT).show();
+
+        if(!selectedOption.isEmpty() || !PrimeiroAcessoMatricula.isEmpty() || !PrimeiroAcessoSenha.isEmpty() || !PrimeiroAcessoConfirmarSenha.isEmpty() || !PrimeiroAcessoNome.isEmpty()){
+            if(selectedOption.equals("Professor")){
+                usuarioAPP.setProfessor(true);
+            } else{
+                usuarioAPP.setProfessor(false);
+            }
+
+            usuarioAPP.setNome(PrimeiroAcessoNome);
+            usuarioAPP.setMatricula(PrimeiroAcessoMatricula);
+
+            if(PrimeiroAcessoSenha.equals(PrimeiroAcessoConfirmarSenha)){
+                usuarioAPP.setSenha(PrimeiroAcessoSenha);
+
+                logado = false;
+                UsuarioDAO usuarioBD = new UsuarioDAO(this);
+                //Toast.makeText(this, usuarioAPP.getMatricula(), Toast.LENGTH_SHORT).show();
+                usuarioBD.addUsuario(usuarioAPP);
+                setContentView(R.layout.activity_main);
+            }
+
+        }
+
     }
 
     public void btnOnClickViewMenu(View view){
