@@ -19,7 +19,7 @@ import java.util.List;
 public class UsuarioDAO extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "PI3AMVC_DB";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 4;
     private static final String TB_USUARIOS = "tb_usuarios";
     private static final String KEY_ID = "id";
     private static final String NOME = "nome";

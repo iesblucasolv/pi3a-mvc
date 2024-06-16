@@ -1,9 +1,12 @@
 package com.example.pi3apdm;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -14,8 +17,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.pi3apdm.dao.AvisoDAO;
 import com.example.pi3apdm.dao.UsuarioDAO;
+import com.example.pi3apdm.model.AvisoVO;
 import com.example.pi3apdm.model.UsuarioVO;
+import com.example.pi3apdm.util.AvisoAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,6 +152,33 @@ public class MainActivity extends AppCompatActivity {
             //Toast.makeText(this, "Aluno", Toast.LENGTH_SHORT).show();
             setContentView(R.layout.ver_avisos_valunos);
         }
+        try {
+            ListView listViewAvisos;
+            AvisoAdapter avisoAdapter;
+            AvisoDAO avisoDAO;
+            ArrayList<Integer> arrayIds;
+
+            listViewAvisos = findViewById(R.id.listViewAvisos);
+            avisoDAO = new AvisoDAO(this);
+
+            // Recupera os avisos do banco de dados
+            List<AvisoVO> avisos = avisoDAO.getAllAvisos();
+
+            // Configura o adaptador personalizado
+            avisoAdapter = new AvisoAdapter(this, avisos);
+            listViewAvisos.setAdapter(avisoAdapter);
+
+            // Preenche o arrayIds com os IDs dos avisos
+            arrayIds = new ArrayList<>();
+            for (AvisoVO aviso : avisos) {
+                arrayIds.add(aviso.getId());
+            }
+
+
+        } catch (Exception e){
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.d("DEBUG", e.getMessage());
+        }
 
 
     }
@@ -159,6 +192,54 @@ public class MainActivity extends AppCompatActivity {
             //Toast.makeText(this, "Aluno", Toast.LENGTH_SHORT).show();
             setContentView(R.layout.ver_resumos_valunos);
         }
+    }
+
+
+    public void btnOnClickViewAdicionarAviso(View view){
+        EditText TituloAvisoEditText = (EditText) findViewById(R.id.editTextTituloAviso);
+        String TituloAviso = TituloAvisoEditText.getText().toString();
+        EditText ConteudoAvisoEditText = (EditText) findViewById(R.id.editTextConteudoAviso);
+        String ConteudoAviso = ConteudoAvisoEditText.getText().toString();
+
+
+        if(!TituloAviso.isEmpty() && !ConteudoAviso.isEmpty()){
+            AvisoVO novoAviso = new AvisoVO();
+            novoAviso.setConteudo(ConteudoAviso);
+            novoAviso.setTitulo(TituloAviso);
+            novoAviso.setProfessorID(usuarioLogado.getId());
+
+            AvisoDAO avisoBD = new AvisoDAO(this);
+            avisoBD.addAviso(novoAviso);
+            setContentView(R.layout.ver_avisos_vprofessores);
+            try {
+                ListView listViewAvisos;
+                AvisoAdapter avisoAdapter;
+                AvisoDAO avisoDAO;
+                ArrayList<Integer> arrayIds;
+
+                listViewAvisos = findViewById(R.id.listViewAvisos);
+                avisoDAO = new AvisoDAO(this);
+
+                // Recupera os avisos do banco de dados
+                List<AvisoVO> avisos = avisoDAO.getAllAvisos();
+
+                // Configura o adaptador personalizado
+                avisoAdapter = new AvisoAdapter(this, avisos);
+                listViewAvisos.setAdapter(avisoAdapter);
+
+                // Preenche o arrayIds com os IDs dos avisos
+                arrayIds = new ArrayList<>();
+                for (AvisoVO aviso : avisos) {
+                    arrayIds.add(aviso.getId());
+                }
+
+
+            } catch (Exception e){
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("DEBUG", e.getMessage());
+            }
+        }
+
     }
 
     public void btnOnClickViewEscreverAviso(View view){
