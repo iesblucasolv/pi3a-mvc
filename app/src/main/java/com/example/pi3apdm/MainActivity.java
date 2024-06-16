@@ -60,22 +60,21 @@ public class MainActivity extends AppCompatActivity {
 
             UsuarioDAO usuarioBD = new UsuarioDAO(this);
             ltUsuarios = usuarioBD.getAllUsuarios();
-        Toast.makeText(this, getString(usuarioBD.getCountUsuarios()), Toast.LENGTH_SHORT).show();
             try{
 
+                //Toast.makeText(this, String.valueOf(usuarioBD.getCountUsuarios()), Toast.LENGTH_SHORT).show();
 
                 if(usuarioBD.getCountUsuarios() != 0){
                     for(int i = 0; i<usuarioBD.getCountUsuarios();i++){
-                        if(Objects.equals(ltUsuarios.get(i).getMatricula(), usuarioAPP.getMatricula()) || Objects.equals(ltUsuarios.get(i).getSenha(), usuarioAPP.getSenha())){
+                        //Toast.makeText(this, ltUsuarios.get(i).getMatricula(), Toast.LENGTH_SHORT).show();
+                        if(Objects.equals(ltUsuarios.get(i).getMatricula(), usuarioAPP.getMatricula()) && Objects.equals(ltUsuarios.get(i).getSenha(), usuarioAPP.getSenha())){
                             logado = true;
                         }
                     }
                 }
             }catch (Exception e){
-                Toast.makeText(this, "Erro", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-
-
 
             if(logado){
                 setContentView(R.layout.menu);
@@ -107,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         }
         //Toast.makeText(this, selectedOption, Toast.LENGTH_SHORT).show();
 
-        if(!selectedOption.isEmpty() || !PrimeiroAcessoMatricula.isEmpty() || !PrimeiroAcessoSenha.isEmpty() || !PrimeiroAcessoConfirmarSenha.isEmpty() || !PrimeiroAcessoNome.isEmpty()){
+        if(!selectedOption.isEmpty() && !PrimeiroAcessoMatricula.isEmpty() && !PrimeiroAcessoSenha.isEmpty() && !PrimeiroAcessoConfirmarSenha.isEmpty() && !PrimeiroAcessoNome.isEmpty()){
             if(selectedOption.equals("Professor")){
                 usuarioAPP.setProfessor(true);
             } else{
