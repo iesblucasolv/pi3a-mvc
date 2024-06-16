@@ -134,7 +134,7 @@ public class UsuarioDAO extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(NOME, usuarioVO.getNome());
 
-        qtdRegistrosAtualizados = db.update(TB_USUARIOS, contentValues,KEY_ID + " = ? ", new String[]{String.valueOf(professorVO.getId())});
+        qtdRegistrosAtualizados = db.update(TB_USUARIOS, contentValues,KEY_ID + " = ? ", new String[]{String.valueOf(usuarioVO.getId())});
 
         db.close();
         return qtdRegistrosAtualizados;
