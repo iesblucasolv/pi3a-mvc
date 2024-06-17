@@ -19,10 +19,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.pi3apdm.dao.AvisoDAO;
+import com.example.pi3apdm.dao.ResumoDAO;
 import com.example.pi3apdm.dao.UsuarioDAO;
 import com.example.pi3apdm.model.AvisoVO;
+import com.example.pi3apdm.model.ResumoVO;
 import com.example.pi3apdm.model.UsuarioVO;
 import com.example.pi3apdm.util.AvisoAdapter;
+import com.example.pi3apdm.util.ResumoAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -177,12 +180,15 @@ public class MainActivity extends AppCompatActivity {
             listViewAvisos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    AvisoVO avisoExcluir = avisos.get(position);
-                    avisoDAO.deleteAviso(avisoExcluir);
+                    if(usuarioLogado.isProfessor()){
+                        AvisoVO avisoExcluir = avisos.get(position);
+                        avisoDAO.deleteAviso(avisoExcluir);
 
-                    // Remove o item da lista e notifica o adaptador
-                    avisos.remove(position);
-                    avisoAdapter.notifyDataSetChanged();
+                        // Remove o item da lista e notifica o adaptador
+                        avisos.remove(position);
+                        avisoAdapter.notifyDataSetChanged();
+                    }
+
 
                     return true;
                 }
@@ -201,6 +207,46 @@ public class MainActivity extends AppCompatActivity {
         }else{
             //Toast.makeText(this, "Aluno", Toast.LENGTH_SHORT).show();
             setContentView(R.layout.ver_resumos_valunos);
+        }
+
+        try {
+            ListView listViewResumos;
+            ResumoAdapter resumoAdapter;
+            ResumoDAO resumoDAO;
+            ArrayList<Integer> arrayIds2;
+
+            listViewResumos = findViewById(R.id.listViewResumos);
+            resumoDAO = new ResumoDAO(this);
+
+            List<ResumoVO> resumos = resumoDAO.getAllResumos();
+
+            resumoAdapter = new ResumoAdapter(this, resumos);
+            listViewResumos.setAdapter(resumoAdapter);
+
+            arrayIds2 = new ArrayList<>();
+            for (ResumoVO resumo : resumos) {
+                arrayIds2.add(resumo.getId());
+            }
+
+            listViewResumos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    if(usuarioLogado.isProfessor()){
+                        ResumoVO resumoExcluir = resumos.get(position);
+                        resumoDAO.deleteResumo(resumoExcluir);
+
+                        resumos.remove(position);
+                        resumoAdapter.notifyDataSetChanged();
+
+                    }
+
+                    return true;
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.d("DEBUG", e.getMessage());
         }
     }
 
@@ -246,12 +292,15 @@ public class MainActivity extends AppCompatActivity {
                 listViewAvisos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                        AvisoVO avisoExcluir = avisos.get(position);
-                        avisoDAO.deleteAviso(avisoExcluir);
+                        if(usuarioLogado.isProfessor()){
+                            AvisoVO avisoExcluir = avisos.get(position);
+                            avisoDAO.deleteAviso(avisoExcluir);
 
-                        // Remove o item da lista e notifica o adaptador
-                        avisos.remove(position);
-                        avisoAdapter.notifyDataSetChanged();
+                            // Remove o item da lista e notifica o adaptador
+                            avisos.remove(position);
+                            avisoAdapter.notifyDataSetChanged();
+                        }
+
 
                         return true;
                     }
@@ -272,6 +321,64 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnOnClickViewEscreverResumo(View view){
         setContentView(R.layout.escrever_resumo);
+    }
+
+    public void btnOnClickAdicionarResumo(View view){
+        EditText TituloResumoEditText = (EditText) findViewById(R.id.editTextTituloResumo);
+        String TituloResumo = TituloResumoEditText.getText().toString();
+        EditText ConteudoResumoEditText = (EditText) findViewById(R.id.editTextConteudoResumo);
+        String ConteudoResumo = ConteudoResumoEditText.getText().toString();
+
+
+        if(!TituloResumo.isEmpty() && !ConteudoResumo.isEmpty()){
+            ResumoVO novoResumo = new ResumoVO();
+            novoResumo.setConteudo(ConteudoResumo);
+            novoResumo.setTitulo(TituloResumo);
+            novoResumo.setProfessorID(usuarioLogado.getId());
+
+            ResumoDAO resumoBD = new ResumoDAO(this);
+            resumoBD.addResumo(novoResumo);
+            setContentView(R.layout.ver_resumos_vprofessores);
+            try {
+                ListView listViewResumos;
+                ResumoAdapter resumoAdapter;
+                ResumoDAO resumoDAO;
+                ArrayList<Integer> arrayIds2;
+
+                listViewResumos = findViewById(R.id.listViewResumos);
+                resumoDAO = new ResumoDAO(this);
+
+                List<ResumoVO> resumos = resumoDAO.getAllResumos();
+
+                resumoAdapter = new ResumoAdapter(this, resumos);
+                listViewResumos.setAdapter(resumoAdapter);
+
+                arrayIds2 = new ArrayList<>();
+                for (ResumoVO resumo : resumos) {
+                    arrayIds2.add(resumo.getId());
+                }
+
+                listViewResumos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        if(usuarioLogado.isProfessor()){
+                            ResumoVO resumoExcluir = resumos.get(position);
+                            resumoDAO.deleteResumo(resumoExcluir);
+
+                            resumos.remove(position);
+                            resumoAdapter.notifyDataSetChanged();
+
+                        }
+
+                        return true;
+                    }
+                });
+            } catch (Exception e) {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("DEBUG", e.getMessage());
+            }
+        }
     }
 
     public void btnOnClickViewLogin(View view){

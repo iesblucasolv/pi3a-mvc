@@ -5,8 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 
+import com.example.pi3apdm.model.AvisoVO;
 import com.example.pi3apdm.model.ResumoVO;
 
 
@@ -16,7 +18,7 @@ import java.util.List;
 
 public class ResumoDAO extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "PI3AMVC_DB";
+    private static final String DATABASE_NAME = "PI3AMVC_DB3";
     private static final int DATABASE_VERSION = 1;
     private static final String TB_RESUMOS = "tb_resumos";
     private static final String KEY_ID = "id";
@@ -35,7 +37,7 @@ public class ResumoDAO extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_TB_RESUMOS = "CREATE TABLE "+ TB_RESUMOS + "(" + KEY_ID + "INTEGER PRIMARY KEY," + TITULO + " TEXT," + CONTEUDO + " TEXT," + PROFESSOR_ID + " TEXT)";
+        String CREATE_TB_RESUMOS = "CREATE TABLE "+ TB_RESUMOS + " (" + KEY_ID + " INTEGER PRIMARY KEY, " + TITULO + " TEXT, " + CONTEUDO + " TEXT, " + PROFESSOR_ID + " INTEGER)";
         db.execSQL(CREATE_TB_RESUMOS);
     }
 
@@ -67,31 +69,34 @@ public class ResumoDAO extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuerySQL, null);
         cursor.close();
+        db.close();
 
         // return count
-        return cursor.getCount();
+        return count;
     }
 
 
     public List<ResumoVO> getAllResumos(){
-        List<ResumoVO> ltResumos = new ArrayList<ResumoVO>();
-        String SELECT_QUERY = "SELECT * FROM "+TB_RESUMOS;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(SELECT_QUERY, null);
-        if(cursor.moveToFirst()){
-            do {
-                ResumoVO resumoVO = new ResumoVO();
-                resumoVO.setId(Integer.parseInt(cursor.getString(0)));
-                resumoVO.setTitulo(cursor.getString(1));
-                resumoVO.setConteudo(cursor.getString(2));
-                resumoVO.setProfessorID(Integer.parseInt(cursor.getString(3)));
+        List<ResumoVO> ltResumos = new ArrayList<>();
+        String SELECT_QUERY = "SELECT * FROM " + TB_RESUMOS;
+        try (SQLiteDatabase db = this.getReadableDatabase();
+             Cursor cursor = db.rawQuery(SELECT_QUERY, null)) {
+            if(cursor.moveToFirst()){
+                do {
+                    ResumoVO resumoVO = new ResumoVO();
+                    resumoVO.setId(cursor.getInt(0));
+                    resumoVO.setTitulo(cursor.getString(1));
+                    resumoVO.setConteudo(cursor.getString(2));
+                    resumoVO.setProfessorID(cursor.getInt(3));
 
-                ltResumos.add(resumoVO);
-            }while (cursor.moveToNext());
+                    ltResumos.add(resumoVO);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            // Lidar com exceções, se necessário
+            Log.e("ERROR", e.getMessage());
         }
 
-        cursor.close();
-        db.close();
         return ltResumos;
     }
 
