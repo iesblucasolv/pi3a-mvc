@@ -3,6 +3,7 @@ package com.example.pi3apdm;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -144,14 +145,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.menu);
     }
 
-    public void btnOnClickViewVerAvisos(View view){
-        if(usuarioLogado.isProfessor()){
-            //Toast.makeText(this, "Professor", Toast.LENGTH_SHORT).show();
+    public void btnOnClickViewVerAvisos(View view) {
+        if (usuarioLogado.isProfessor()) {
             setContentView(R.layout.ver_avisos_vprofessores);
-        }else{
-            //Toast.makeText(this, "Aluno", Toast.LENGTH_SHORT).show();
+        } else {
             setContentView(R.layout.ver_avisos_valunos);
         }
+
         try {
             ListView listViewAvisos;
             AvisoAdapter avisoAdapter;
@@ -174,13 +174,23 @@ public class MainActivity extends AppCompatActivity {
                 arrayIds.add(aviso.getId());
             }
 
+            listViewAvisos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    AvisoVO avisoExcluir = avisos.get(position);
+                    avisoDAO.deleteAviso(avisoExcluir);
 
-        } catch (Exception e){
+                    // Remove o item da lista e notifica o adaptador
+                    avisos.remove(position);
+                    avisoAdapter.notifyDataSetChanged();
+
+                    return true;
+                }
+            });
+        } catch (Exception e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             Log.d("DEBUG", e.getMessage());
         }
-
-
     }
 
 
@@ -232,6 +242,20 @@ public class MainActivity extends AppCompatActivity {
                 for (AvisoVO aviso : avisos) {
                     arrayIds.add(aviso.getId());
                 }
+
+                listViewAvisos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                        AvisoVO avisoExcluir = avisos.get(position);
+                        avisoDAO.deleteAviso(avisoExcluir);
+
+                        // Remove o item da lista e notifica o adaptador
+                        avisos.remove(position);
+                        avisoAdapter.notifyDataSetChanged();
+
+                        return true;
+                    }
+                });
 
 
             } catch (Exception e){
