@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -20,9 +21,11 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.pi3apdm.dao.AvisoDAO;
 import com.example.pi3apdm.dao.ResumoDAO;
+import com.example.pi3apdm.dao.TurmaDAO;
 import com.example.pi3apdm.dao.UsuarioDAO;
 import com.example.pi3apdm.model.AvisoVO;
 import com.example.pi3apdm.model.ResumoVO;
+import com.example.pi3apdm.model.TurmaVO;
 import com.example.pi3apdm.model.UsuarioVO;
 import com.example.pi3apdm.util.AvisoAdapter;
 import com.example.pi3apdm.util.ResumoAdapter;
@@ -383,5 +386,155 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnOnClickViewLogin(View view){
         setContentView(R.layout.activity_main);
+    }
+
+    public void btnOnClickViewEditarTurma(View view){
+        setContentView(R.layout.editar_turma);
+        TurmaVO turma = new TurmaVO();
+        TurmaDAO turmaBD = new TurmaDAO(this);
+
+        EditText editTextCodigoTurma = (EditText) findViewById(R.id.editTextCodigoTurma);
+        editTextCodigoTurma.setText(turmaBD.getTurma(1).getCodigo_turma());
+        //String TituloAviso = TituloAvisoEditText.getText().toString();
+
+        EditText editTextSala = (EditText) findViewById(R.id.editTextSala);
+        editTextSala.setText(turmaBD.getTurma(1).getSala());
+
+        EditText editTextDisciplina = (EditText) findViewById(R.id.editTextDisciplina);
+        editTextDisciplina.setText(turmaBD.getTurma(1).getDisciplina());
+
+        EditText editTextHorario = (EditText) findViewById(R.id.editTextHorario);
+        editTextHorario.setText(turmaBD.getTurma(1).getHorario());
+
+        EditText editTextPeriodo = (EditText) findViewById(R.id.editTextPeriodo);
+        editTextPeriodo.setText(turmaBD.getTurma(1).getPeriodo());
+
+        EditText editTextDiaSemana = (EditText) findViewById(R.id.editTextDiaSemana);
+        editTextDiaSemana.setText(turmaBD.getTurma(1).getDia_semana());
+
+        EditText editTextProfessorTurma = (EditText) findViewById(R.id.editTextProfessorTurma);
+        editTextProfessorTurma.setText(turmaBD.getTurma(1).getProfessor());
+
+    }
+
+    public void btnOnClickViewVerTurma(View view){
+        if(usuarioLogado.isProfessor()){
+            //Toast.makeText(this, "Professor", Toast.LENGTH_SHORT).show();
+            setContentView(R.layout.ver_informacoes_turma_vprofessores);
+        }else{
+            //Toast.makeText(this, "Aluno", Toast.LENGTH_SHORT).show();
+            setContentView(R.layout.ver_informacoes_turma_valunos);
+        }
+
+        //TextView TituloPag = (TextView) findViewById(R.id.textView26);
+        //String TituloPagina = TituloPag.getText().toString();
+        //TituloPag.setText("Texto Alterado");
+
+        TurmaVO turma = new TurmaVO();
+        TurmaDAO turmaBD = new TurmaDAO(this);
+
+        /*
+        turma.setCodigo_turma("cconm3a");
+        turma.setSala("JB1");
+        turma.setDisciplina("Projeto Integrador 3A");
+        turma.setHorario("18:00 - 19:15");
+        turma.setPeriodo("Noturno");
+        turma.setDia_semana("Quarta-feira");
+        turma.setProfessor("Bruno marcos");
+        */
+
+        //turmaBD.addTurma(turma);
+
+        //Toast.makeText(this, turmaBD.getTurma(1).getDisciplina(), Toast.LENGTH_SHORT).show();
+
+        TextView TextViewCodigoTurma = (TextView) findViewById(R.id.textViewCodigoTurma);
+        TextViewCodigoTurma.setText(turmaBD.getTurma(1).getCodigo_turma());
+
+        TextView TextViewSala = (TextView) findViewById(R.id.textViewSala);
+        TextViewSala.setText(turmaBD.getTurma(1).getSala());
+
+        TextView TextViewDisciplina = (TextView) findViewById(R.id.textViewDisciplina);
+        TextViewDisciplina.setText(turmaBD.getTurma(1).getDisciplina());
+
+        TextView TextViewHorario = (TextView) findViewById(R.id.textViewHorario);
+        TextViewHorario.setText(turmaBD.getTurma(1).getHorario());
+
+        TextView TextViewPeriodo = (TextView) findViewById(R.id.textViewPeriodo);
+        TextViewPeriodo.setText(turmaBD.getTurma(1).getPeriodo());
+
+        TextView TextViewDiaSemana = (TextView) findViewById(R.id.textViewDiaSemana);
+        TextViewDiaSemana.setText(turmaBD.getTurma(1).getDia_semana());
+
+        TextView TextViewProfessorTurma = (TextView) findViewById(R.id.textViewProfessorTurma);
+        TextViewProfessorTurma.setText(turmaBD.getTurma(1).getProfessor());
+
+    }
+
+    public void btnOnClickSalvarEdicoesTurma(View view){
+
+        TurmaVO turma = new TurmaVO();
+        TurmaDAO turmaBD = new TurmaDAO(this);
+
+        EditText editTextCodigoTurma = (EditText) findViewById(R.id.editTextCodigoTurma);
+        String CodigoTurma = editTextCodigoTurma.getText().toString();
+
+        EditText editTextSala = (EditText) findViewById(R.id.editTextSala);
+        String sala = editTextSala.getText().toString();
+
+        EditText editTextDisciplina = (EditText) findViewById(R.id.editTextDisciplina);
+        String disciplina = editTextDisciplina.getText().toString();
+
+        EditText editTextHorario = (EditText) findViewById(R.id.editTextHorario);
+        String horario = editTextHorario.getText().toString();
+
+        EditText editTextPeriodo = (EditText) findViewById(R.id.editTextPeriodo);
+        String periodo = editTextPeriodo.getText().toString();
+
+        EditText editTextDiaSemana = (EditText) findViewById(R.id.editTextDiaSemana);
+        String DiaSemana = editTextDiaSemana.getText().toString();
+
+        EditText editTextProfessorTurma = (EditText) findViewById(R.id.editTextProfessorTurma);
+        String professorTurma = editTextProfessorTurma.getText().toString();
+
+        turma.setCodigo_turma(CodigoTurma);
+        turma.setSala(sala);
+        turma.setDisciplina(disciplina);
+        turma.setHorario(horario);
+        turma.setPeriodo(periodo);
+        turma.setDia_semana(DiaSemana);
+        turma.setProfessor(professorTurma);
+        turma.setId(1);
+
+        //Toast.makeText(this, turma.getProfessor(), Toast.LENGTH_SHORT).show();
+
+        turmaBD.updateTurma(turma);
+
+        //Toast.makeText(this, CodigoTurma, Toast.LENGTH_SHORT).show();
+
+        setContentView(R.layout.ver_informacoes_turma_vprofessores);
+
+        TurmaVO turma2 = new TurmaVO();
+        TurmaDAO turmaBD2 = new TurmaDAO(this);
+
+        TextView TextViewCodigoTurma = (TextView) findViewById(R.id.textViewCodigoTurma);
+        TextViewCodigoTurma.setText(turmaBD2.getTurma(1).getCodigo_turma());
+
+        TextView TextViewSala = (TextView) findViewById(R.id.textViewSala);
+        TextViewSala.setText(turmaBD2.getTurma(1).getSala());
+
+        TextView TextViewDisciplina = (TextView) findViewById(R.id.textViewDisciplina);
+        TextViewDisciplina.setText(turmaBD2.getTurma(1).getDisciplina());
+
+        TextView TextViewHorario = (TextView) findViewById(R.id.textViewHorario);
+        TextViewHorario.setText(turmaBD2.getTurma(1).getHorario());
+
+        TextView TextViewPeriodo = (TextView) findViewById(R.id.textViewPeriodo);
+        TextViewPeriodo.setText(turmaBD2.getTurma(1).getPeriodo());
+
+        TextView TextViewDiaSemana = (TextView) findViewById(R.id.textViewDiaSemana);
+        TextViewDiaSemana.setText(turmaBD2.getTurma(1).getDia_semana());
+
+        TextView TextViewProfessorTurma = (TextView) findViewById(R.id.textViewProfessorTurma);
+        TextViewProfessorTurma.setText(turmaBD2.getTurma(1).getProfessor());
     }
 }

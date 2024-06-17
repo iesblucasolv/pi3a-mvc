@@ -16,7 +16,7 @@ import java.util.List;
 
 public class TurmaDAO extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "PI3AMVC_DB";
+    private static final String DATABASE_NAME = "PI3AMVC_DB4";
     private static final int DATABASE_VERSION = 1;
     private static final String TB_TURMAS = "tb_turmas";
     private static final String KEY_ID = "id";
@@ -39,9 +39,18 @@ public class TurmaDAO extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_TB_TURMAS = "CREATE TABLE "+ TB_TURMAS + "(" + KEY_ID + "INTEGER PRIMARY KEY," + PROFESSOR + " TEXT," + DIA_SEMANA + " TEXT," + DISCIPLINA + " TEXT," + PERIODO + " TEXT," + CODIGO_TURMA + " TEXT," + SALA + " TEXT," + HORARIO + " TEXT)";
+        String CREATE_TB_TURMAS = "CREATE TABLE " + TB_TURMAS + " ("
+                + KEY_ID + " INTEGER PRIMARY KEY, "
+                + PROFESSOR + " TEXT, "
+                + DIA_SEMANA + " TEXT, "
+                + DISCIPLINA + " TEXT, "
+                + PERIODO + " TEXT, "
+                + CODIGO_TURMA + " TEXT, "
+                + SALA + " TEXT, "
+                + HORARIO + " TEXT)";
         db.execSQL(CREATE_TB_TURMAS);
     }
+
 
 
     @Override
@@ -52,7 +61,6 @@ public class TurmaDAO extends SQLiteOpenHelper {
 
 
     public void addTurma(TurmaVO turmaVO){
-        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(CODIGO_TURMA, turmaVO.getCodigo_turma());
@@ -63,8 +71,12 @@ public class TurmaDAO extends SQLiteOpenHelper {
         contentValues.put(DIA_SEMANA, turmaVO.getDia_semana());
         contentValues.put(PROFESSOR, turmaVO.getProfessor());
 
-        db.insert(TB_TURMAS, null, contentValues);
-        db.close();
+        try(SQLiteDatabase db = this.getWritableDatabase()){
+            db.insert(TB_TURMAS, null, contentValues);
+        } catch (Exception e) {
+            // Log the exception or handle it as needed
+            e.printStackTrace();
+        }
     }
 
     public int getCountTurmas(){
@@ -74,36 +86,44 @@ public class TurmaDAO extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuerySQL, null);
+        count = cursor.getCount();
         cursor.close();
+        db.close();
+
+        //Log.d("DEBUG", "Tamanho da lista de usuários: " + count);
+
 
         // return count
-        return cursor.getCount();
+        return count;
     }
 
 
     public List<TurmaVO> getAllTurmas(){
         List<TurmaVO> ltTurmas = new ArrayList<TurmaVO>();
         String SELECT_QUERY = "SELECT * FROM "+TB_TURMAS;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(SELECT_QUERY, null);
-        if(cursor.moveToFirst()){
-            do {
-                TurmaVO turmaVO = new TurmaVO();
-                turmaVO.setId(Integer.parseInt(cursor.getString(0)));
-                turmaVO.setCodigo_turma(cursor.getString(1));
-                turmaVO.setSala(cursor.getString(2));
-                turmaVO.setDisciplina(cursor.getString(3));
-                turmaVO.setHorario(cursor.getString(4));
-                turmaVO.setPeriodo(cursor.getString(5));
-                turmaVO.setDia_semana(cursor.getString(6));
-                turmaVO.setProfessor(cursor.getString(7));
 
-                ltTurmas.add(turmaVO);
-            }while (cursor.moveToNext());
+        try(SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(SELECT_QUERY, null)){
+            if(cursor.moveToFirst()){
+                do {
+                    TurmaVO turmaVO = new TurmaVO();
+                    turmaVO.setId(Integer.parseInt(cursor.getString(0)));
+                    turmaVO.setCodigo_turma(cursor.getString(1));
+                    turmaVO.setSala(cursor.getString(2));
+                    turmaVO.setDisciplina(cursor.getString(3));
+                    turmaVO.setHorario(cursor.getString(4));
+                    turmaVO.setPeriodo(cursor.getString(5));
+                    turmaVO.setDia_semana(cursor.getString(6));
+                    turmaVO.setProfessor(cursor.getString(7));
+
+                    ltTurmas.add(turmaVO);
+                }while (cursor.moveToNext());
+            }
+        }  catch (Exception e) {
+            // Log e tratamento de exceção
+            e.printStackTrace();
         }
 
-        cursor.close();
-        db.close();
         return ltTurmas;
     }
 
@@ -141,10 +161,16 @@ public class TurmaDAO extends SQLiteOpenHelper {
     public int updateTurma(TurmaVO turmaVO){
         int qtdRegistrosAtualizados = 0;
 
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
+        contentValues.put(CODIGO_TURMA, turmaVO.getCodigo_turma());
         contentValues.put(SALA, turmaVO.getSala());
+        contentValues.put(DISCIPLINA, turmaVO.getDisciplina());
+        contentValues.put(HORARIO, turmaVO.getHorario());
+        contentValues.put(PERIODO, turmaVO.getPeriodo());
+        contentValues.put(DIA_SEMANA, turmaVO.getDia_semana());
+        contentValues.put(PROFESSOR, turmaVO.getProfessor());
 
         qtdRegistrosAtualizados = db.update(TB_TURMAS, contentValues,KEY_ID + " = ? ", new String[]{String.valueOf(turmaVO.getId())});
 
