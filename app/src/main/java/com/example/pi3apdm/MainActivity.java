@@ -34,6 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -48,9 +51,41 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    //validacoes
+
+    public static boolean containsAlphabet(String str) {
+        Pattern pattern = Pattern.compile("[a-zA-Z]");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
+    }
+
+    public static boolean containsSpecialCharacters(String str) {
+        Pattern pattern = Pattern.compile("[@#$]");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
+    }
+
+    public static boolean containsDigit(String str) {
+        Pattern pattern = Pattern.compile("[0-9]");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
+    }
+
+    public static boolean containsSpecialCharacter(String str) {
+        Pattern pattern = Pattern.compile("[^a-zA-Z0-9@#$]");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
+    }
+
+    public static boolean isNumeric(String str) {
+        return str.matches("\\d+");
+    }
+
+
     //variaveis
 
     public boolean logado = false;
+    public boolean validacoesPA = false;
     UsuarioVO usuarioLogado = new UsuarioVO();
 
 
@@ -59,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnOnClickViewVerifyLogin(View view){
+
+        TextView textViewValidacaoLogin = (TextView) findViewById(R.id.textViewValidacaoLogin);
 
         UsuarioVO usuarioAPP = new UsuarioVO();
 
@@ -84,6 +121,10 @@ public class MainActivity extends AppCompatActivity {
                         if(Objects.equals(ltUsuarios.get(i).getMatricula(), usuarioAPP.getMatricula()) && Objects.equals(ltUsuarios.get(i).getSenha(), usuarioAPP.getSenha())){
                             logado = true;
                             usuarioLogado = ltUsuarios.get(i);
+                            textViewValidacaoLogin.setText("");
+                        } else{
+                            //TextView textViewValidacaoLogin = (TextView) findViewById(R.id.textViewValidacaoLogin);
+                            textViewValidacaoLogin.setText("Usuário não encontrado");
                         }
                     }
                 }
@@ -99,6 +140,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnOnClickCadastrarPrimeiroAcesso(View view){
+
+        TextView textViewValidacao = (TextView) findViewById(R.id.textViewValidacao);
+        //textViewValidacao.setText("");
 
         UsuarioVO usuarioAPP = new UsuarioVO();
 
@@ -133,18 +177,70 @@ public class MainActivity extends AppCompatActivity {
             usuarioAPP.setNome(PrimeiroAcessoNome);
             usuarioAPP.setMatricula(PrimeiroAcessoMatricula);
 
-            if(PrimeiroAcessoSenha.equals(PrimeiroAcessoConfirmarSenha)){
-                usuarioAPP.setSenha(PrimeiroAcessoSenha);
+            if((PrimeiroAcessoSenha.length() >= 8)){
 
-                //logado = false;
-                UsuarioDAO usuarioBD = new UsuarioDAO(this);
-                //Toast.makeText(this, usuarioAPP.getMatricula(), Toast.LENGTH_SHORT).show();
-                usuarioBD.addUsuario(usuarioAPP);
-                setContentView(R.layout.activity_main);
+                if(containsAlphabet(PrimeiroAcessoSenha)){
+
+                    if(containsSpecialCharacters(PrimeiroAcessoSenha)){
+
+                        if(containsDigit(PrimeiroAcessoSenha)){
+
+                            if(!containsSpecialCharacter(PrimeiroAcessoSenha)){
+
+                                if(PrimeiroAcessoSenha.equals(PrimeiroAcessoConfirmarSenha)){
+                                    usuarioAPP.setSenha(PrimeiroAcessoSenha);
+
+                                    if(isNumeric(PrimeiroAcessoMatricula) && (PrimeiroAcessoMatricula.length() == 10)){
+
+                                        validacoesPA = true;
+
+                                    } else {
+                                        validacoesPA = false;
+                                        textViewValidacao.setText("A matrícula deve ser um código numérico de 10 digitos.");
+                                    }
+                                } else{
+                                    validacoesPA = false;
+                                    textViewValidacao.setText("As senhas não conferem.");
+                                }
+                            } else{
+                                validacoesPA = false;
+                                textViewValidacao.setText("A senha não pode conter nenhum caractere especial além de '@', '#' ou '$'.");
+                            }
+                        } else{
+                            validacoesPA = false;
+                            textViewValidacao.setText("A senha deve conter pelo menos um dígito de 0 a 9.");
+                        }
+                    } else{
+                        validacoesPA = false;
+                        textViewValidacao.setText("A senha deve conter pelo menos um caractere especial entre '@', '#' ou '$'.");
+                    }
+                } else{
+                    validacoesPA = false;
+                    textViewValidacao.setText("A senha deve conter pelo menos uma letra do alfabeto da língua portuguesa.");
+                }
+            } else{
+                validacoesPA = false;
+                textViewValidacao.setText("A senha deve conter 8 caracteres ou mais.");
             }
-
+        } else{
+            validacoesPA = false;
+            textViewValidacao.setText("Todos os campos são obrigatórios.");
         }
 
+        if(validacoesPA){
+
+            textViewValidacao.setText("");
+
+            //logado = false;
+            UsuarioDAO usuarioBD = new UsuarioDAO(this);
+            //Toast.makeText(this, usuarioAPP.getMatricula(), Toast.LENGTH_SHORT).show();
+
+
+            usuarioBD.addUsuario(usuarioAPP);
+            setContentView(R.layout.activity_main);
+            //Toast.makeText(this, "José: " + PrimeiroAcessoSenha.length(), Toast.LENGTH_SHORT).show();
+
+        }
     }
 
     public void btnOnClickViewMenu(View view){
@@ -187,7 +283,6 @@ public class MainActivity extends AppCompatActivity {
                         AvisoVO avisoExcluir = avisos.get(position);
                         avisoDAO.deleteAviso(avisoExcluir);
 
-                        // Remove o item da lista e notifica o adaptador
                         avisos.remove(position);
                         avisoAdapter.notifyDataSetChanged();
                     }
@@ -260,8 +355,11 @@ public class MainActivity extends AppCompatActivity {
         EditText ConteudoAvisoEditText = (EditText) findViewById(R.id.editTextConteudoAviso);
         String ConteudoAviso = ConteudoAvisoEditText.getText().toString();
 
+        TextView textViewValidacaoAviso = (TextView) findViewById(R.id.textViewValidacaoAviso);
+
 
         if(!TituloAviso.isEmpty() && !ConteudoAviso.isEmpty()){
+            textViewValidacaoAviso.setText("");
             AvisoVO novoAviso = new AvisoVO();
             novoAviso.setConteudo(ConteudoAviso);
             novoAviso.setTitulo(TituloAviso);
@@ -314,6 +412,10 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d("DEBUG", e.getMessage());
             }
+        } else {
+            //TextView textViewValidacaoAviso = (TextView) findViewById(R.id.textViewValidacaoAviso);
+            textViewValidacaoAviso.setText("Todos os campos devem ser preenchidos");
+
         }
 
     }
@@ -331,6 +433,8 @@ public class MainActivity extends AppCompatActivity {
         String TituloResumo = TituloResumoEditText.getText().toString();
         EditText ConteudoResumoEditText = (EditText) findViewById(R.id.editTextConteudoResumo);
         String ConteudoResumo = ConteudoResumoEditText.getText().toString();
+
+        TextView textViewValidacaoResumo = (TextView) findViewById(R.id.textViewValidacaoResumo);
 
 
         if(!TituloResumo.isEmpty() && !ConteudoResumo.isEmpty()){
@@ -381,6 +485,8 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d("DEBUG", e.getMessage());
             }
+        } else{
+            textViewValidacaoResumo.setText("Todos os campos devem ser preenchidos");
         }
     }
 

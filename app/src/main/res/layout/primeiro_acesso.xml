@@ -48,7 +48,7 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="225dp"
         android:text="Nome"
         android:textSize="20sp"
@@ -74,7 +74,7 @@
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="225dp"
         android:text="Senha"
         android:textSize="20sp"
@@ -98,9 +98,9 @@
 
     <RadioGroup
         android:id="@+id/radioGroupIsProfessor"
-        android:layout_width="235dp"
-        android:layout_height="109dp"
-        android:layout_marginTop="30dp"
+        android:layout_width="220dp"
+        android:layout_height="87dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.437"
         app:layout_constraintStart_toStartOf="parent"
@@ -124,7 +124,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="12dp"
         android:backgroundTint="#132FCA"
         android:onClick="btnOnClickCadastrarPrimeiroAcesso"
@@ -132,13 +132,13 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroupIsProfessor" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewValidacao" />
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="105dp"
         android:text="Confirme sua senha"
         android:textSize="20sp"
@@ -172,5 +172,20 @@
         app:layout_constraintEnd_toStartOf="@+id/textView2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewValidacao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="16dp"
+        android:text=" "
+        android:textAlignment="center"
+        android:textColor="#FF0000"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupIsProfessor" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
