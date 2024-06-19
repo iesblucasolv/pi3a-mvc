@@ -1,5 +1,6 @@
 package com.example.pi3apdm;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -53,32 +55,39 @@ public class MainActivity extends AppCompatActivity {
 
     //validacoes
 
-    public static boolean containsAlphabet(String str) {
+    public static boolean contemLetra(String str) {
         Pattern pattern = Pattern.compile("[a-zA-Z]");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
 
-    public static boolean containsSpecialCharacters(String str) {
+    public static boolean contemCaractereEspecial(String str) {
         Pattern pattern = Pattern.compile("[@#$]");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
 
-    public static boolean containsDigit(String str) {
+    public static boolean contemNumero(String str) {
         Pattern pattern = Pattern.compile("[0-9]");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
 
-    public static boolean containsSpecialCharacter(String str) {
+    public static boolean contemOutrosCaracteres(String str) {
         Pattern pattern = Pattern.compile("[^a-zA-Z0-9@#$]");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
 
-    public static boolean isNumeric(String str) {
+    public static boolean eNumerico(String str) {
         return str.matches("\\d+");
+    }
+
+
+    //conversao dp para pixels
+    public int dpToPx(int dp) {
+        float density = getResources().getDisplayMetrics().density;
+        return Math.round((float) dp * density);
     }
 
 
@@ -179,18 +188,18 @@ public class MainActivity extends AppCompatActivity {
 
             if((PrimeiroAcessoSenha.length() >= 8)){
 
-                if(containsAlphabet(PrimeiroAcessoSenha)){
+                if(contemLetra(PrimeiroAcessoSenha)){
 
-                    if(containsSpecialCharacters(PrimeiroAcessoSenha)){
+                    if(contemCaractereEspecial(PrimeiroAcessoSenha)){
 
-                        if(containsDigit(PrimeiroAcessoSenha)){
+                        if(contemNumero(PrimeiroAcessoSenha)){
 
-                            if(!containsSpecialCharacter(PrimeiroAcessoSenha)){
+                            if(!contemOutrosCaracteres(PrimeiroAcessoSenha)){
 
                                 if(PrimeiroAcessoSenha.equals(PrimeiroAcessoConfirmarSenha)){
                                     usuarioAPP.setSenha(PrimeiroAcessoSenha);
 
-                                    if(isNumeric(PrimeiroAcessoMatricula) && (PrimeiroAcessoMatricula.length() == 10)){
+                                    if(eNumerico(PrimeiroAcessoMatricula) && (PrimeiroAcessoMatricula.length() == 10)){
 
                                         validacoesPA = true;
 
@@ -263,14 +272,11 @@ public class MainActivity extends AppCompatActivity {
             listViewAvisos = findViewById(R.id.listViewAvisos);
             avisoDAO = new AvisoDAO(this);
 
-            // Recupera os avisos do banco de dados
             List<AvisoVO> avisos = avisoDAO.getAllAvisos();
 
-            // Configura o adaptador personalizado
             avisoAdapter = new AvisoAdapter(this, avisos);
             listViewAvisos.setAdapter(avisoAdapter);
 
-            // Preenche o arrayIds com os IDs dos avisos
             arrayIds = new ArrayList<>();
             for (AvisoVO aviso : avisos) {
                 arrayIds.add(aviso.getId());
@@ -377,14 +383,11 @@ public class MainActivity extends AppCompatActivity {
                 listViewAvisos = findViewById(R.id.listViewAvisos);
                 avisoDAO = new AvisoDAO(this);
 
-                // Recupera os avisos do banco de dados
                 List<AvisoVO> avisos = avisoDAO.getAllAvisos();
 
-                // Configura o adaptador personalizado
                 avisoAdapter = new AvisoAdapter(this, avisos);
                 listViewAvisos.setAdapter(avisoAdapter);
 
-                // Preenche o arrayIds com os IDs dos avisos
                 arrayIds = new ArrayList<>();
                 for (AvisoVO aviso : avisos) {
                     arrayIds.add(aviso.getId());
@@ -397,12 +400,9 @@ public class MainActivity extends AppCompatActivity {
                             AvisoVO avisoExcluir = avisos.get(position);
                             avisoDAO.deleteAviso(avisoExcluir);
 
-                            // Remove o item da lista e notifica o adaptador
                             avisos.remove(position);
                             avisoAdapter.notifyDataSetChanged();
                         }
-
-
                         return true;
                     }
                 });
@@ -415,7 +415,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             //TextView textViewValidacaoAviso = (TextView) findViewById(R.id.textViewValidacaoAviso);
             textViewValidacaoAviso.setText("Todos os campos devem ser preenchidos");
-
         }
 
     }
@@ -597,50 +596,198 @@ public class MainActivity extends AppCompatActivity {
         String periodo = editTextPeriodo.getText().toString();
 
         EditText editTextDiaSemana = (EditText) findViewById(R.id.editTextDiaSemana);
-        String DiaSemana = editTextDiaSemana.getText().toString();
+        String diaSemana = editTextDiaSemana.getText().toString();
 
         EditText editTextProfessorTurma = (EditText) findViewById(R.id.editTextProfessorTurma);
         String professorTurma = editTextProfessorTurma.getText().toString();
 
-        turma.setCodigo_turma(CodigoTurma);
-        turma.setSala(sala);
-        turma.setDisciplina(disciplina);
-        turma.setHorario(horario);
-        turma.setPeriodo(periodo);
-        turma.setDia_semana(DiaSemana);
-        turma.setProfessor(professorTurma);
-        turma.setId(1);
-
         //Toast.makeText(this, turma.getProfessor(), Toast.LENGTH_SHORT).show();
-
-        turmaBD.updateTurma(turma);
 
         //Toast.makeText(this, CodigoTurma, Toast.LENGTH_SHORT).show();
 
-        setContentView(R.layout.ver_informacoes_turma_vprofessores);
+        //validacoes de edicao de turma
+        boolean validacoesEditTurma = true;
 
-        TurmaVO turma2 = new TurmaVO();
-        TurmaDAO turmaBD2 = new TurmaDAO(this);
+        TextView textViewCodigoTurmaEdit = (TextView) findViewById(R.id.textViewCodigoTurmaEdit);
+        if(CodigoTurma.isEmpty()){
 
-        TextView TextViewCodigoTurma = (TextView) findViewById(R.id.textViewCodigoTurma);
-        TextViewCodigoTurma.setText(turmaBD2.getTurma(1).getCodigo_turma());
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) textViewCodigoTurmaEdit.getLayoutParams();
 
-        TextView TextViewSala = (TextView) findViewById(R.id.textViewSala);
-        TextViewSala.setText(turmaBD2.getTurma(1).getSala());
+            textViewCodigoTurmaEdit.setText("Código da turma: (campo obrigatório)");
+            textViewCodigoTurmaEdit.setTextColor(Color.parseColor("#FF0000"));
+            params.setMarginEnd(dpToPx(-15));
+            textViewCodigoTurmaEdit.setLayoutParams(params);
+            validacoesEditTurma = false;
+        } else {
 
-        TextView TextViewDisciplina = (TextView) findViewById(R.id.textViewDisciplina);
-        TextViewDisciplina.setText(turmaBD2.getTurma(1).getDisciplina());
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) textViewCodigoTurmaEdit.getLayoutParams();
 
-        TextView TextViewHorario = (TextView) findViewById(R.id.textViewHorario);
-        TextViewHorario.setText(turmaBD2.getTurma(1).getHorario());
+            textViewCodigoTurmaEdit.setText("Código da turma:");
+            textViewCodigoTurmaEdit.setTextColor(Color.parseColor("#000000"));
+            params.setMarginEnd(dpToPx(170));
+            textViewCodigoTurmaEdit.setLayoutParams(params);
+        }
 
-        TextView TextViewPeriodo = (TextView) findViewById(R.id.textViewPeriodo);
-        TextViewPeriodo.setText(turmaBD2.getTurma(1).getPeriodo());
+        TextView textViewSalaEdit = (TextView) findViewById(R.id.textViewSalaEdit);
+        if(sala.isEmpty()){
 
-        TextView TextViewDiaSemana = (TextView) findViewById(R.id.textViewDiaSemana);
-        TextViewDiaSemana.setText(turmaBD2.getTurma(1).getDia_semana());
+            ConstraintLayout.LayoutParams params2 = (ConstraintLayout.LayoutParams) textViewSalaEdit.getLayoutParams();
 
-        TextView TextViewProfessorTurma = (TextView) findViewById(R.id.textViewProfessorTurma);
-        TextViewProfessorTurma.setText(turmaBD2.getTurma(1).getProfessor());
+            textViewSalaEdit.setText("Sala: (campo obrigatório)");
+            textViewSalaEdit.setTextColor(Color.parseColor("#FF0000"));
+            params2.setMarginEnd(dpToPx(85));
+            textViewSalaEdit.setLayoutParams(params2);
+            validacoesEditTurma = false;
+
+        }else {
+
+            ConstraintLayout.LayoutParams params2 = (ConstraintLayout.LayoutParams) textViewSalaEdit.getLayoutParams();
+
+            textViewSalaEdit.setText("Sala:");
+            textViewSalaEdit.setTextColor(Color.parseColor("#000000"));
+            params2.setMarginEnd(dpToPx(270));
+            textViewSalaEdit.setLayoutParams(params2);
+        }
+
+        TextView textViewDisciplinaEdit = (TextView) findViewById(R.id.textViewDisciplinaEdit);
+        if(disciplina.isEmpty()){
+
+            ConstraintLayout.LayoutParams params3 = (ConstraintLayout.LayoutParams) textViewDisciplinaEdit.getLayoutParams();
+
+            textViewDisciplinaEdit.setText("Disciplina: (campo obrigatório)");
+            textViewDisciplinaEdit.setTextColor(Color.parseColor("#FF0000"));
+            params3.setMarginEnd(dpToPx(35));
+            textViewDisciplinaEdit.setLayoutParams(params3);
+            validacoesEditTurma = false;
+        }else {
+
+            ConstraintLayout.LayoutParams params3 = (ConstraintLayout.LayoutParams) textViewDisciplinaEdit.getLayoutParams();
+
+            textViewDisciplinaEdit.setText("Disciplina:");
+            textViewDisciplinaEdit.setTextColor(Color.parseColor("#000000"));
+            params3.setMarginEnd(dpToPx(220));
+            textViewDisciplinaEdit.setLayoutParams(params3);
+        }
+
+        TextView textViewHorarioEdit = (TextView) findViewById(R.id.textViewHorarioEdit);
+        if(horario.isEmpty()){
+
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) textViewHorarioEdit.getLayoutParams();
+
+            textViewHorarioEdit.setText("Horário: (campo obrigatório)");
+            textViewHorarioEdit.setTextColor(Color.parseColor("#FF0000"));
+            params.setMarginEnd(dpToPx(55));
+            textViewHorarioEdit.setLayoutParams(params);
+            validacoesEditTurma = false;
+        } else {
+
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) textViewHorarioEdit.getLayoutParams();
+
+            textViewHorarioEdit.setText("Horário:");
+            textViewHorarioEdit.setTextColor(Color.parseColor("#000000"));
+            params.setMarginEnd(dpToPx(240));
+            textViewHorarioEdit.setLayoutParams(params);
+        }
+
+        TextView textViewPeriodoEdit = (TextView) findViewById(R.id.textViewPeriodoEdit);
+        if(periodo.isEmpty()){
+
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) textViewPeriodoEdit.getLayoutParams();
+
+            textViewPeriodoEdit.setText("Período: (campo obrigatório)");
+            textViewPeriodoEdit.setTextColor(Color.parseColor("#FF0000"));
+            params.setMarginEnd(dpToPx(55));
+            textViewPeriodoEdit.setLayoutParams(params);
+            validacoesEditTurma = false;
+        } else {
+
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) textViewPeriodoEdit.getLayoutParams();
+
+            textViewPeriodoEdit.setText("Período:");
+            textViewPeriodoEdit.setTextColor(Color.parseColor("#000000"));
+            params.setMarginEnd(dpToPx(240));
+            textViewPeriodoEdit.setLayoutParams(params);
+        }
+
+        TextView textViewDiaSemanaEdit = (TextView) findViewById(R.id.textViewDiaSemanaEdit);
+        if(diaSemana.isEmpty()){
+
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) textViewDiaSemanaEdit.getLayoutParams();
+
+            textViewDiaSemanaEdit.setText("Dia da semana: (campo obrigatório)");
+            textViewDiaSemanaEdit.setTextColor(Color.parseColor("#FF0000"));
+            params.setMarginEnd(dpToPx(-5));
+            textViewDiaSemanaEdit.setLayoutParams(params);
+            validacoesEditTurma = false;
+        } else {
+
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) textViewDiaSemanaEdit.getLayoutParams();
+
+            textViewDiaSemanaEdit.setText("Dia da semana:");
+            textViewDiaSemanaEdit.setTextColor(Color.parseColor("#000000"));
+            params.setMarginEnd(dpToPx(180));
+            textViewDiaSemanaEdit.setLayoutParams(params);
+        }
+
+        TextView textViewProfessorEdit = (TextView) findViewById(R.id.textViewProfessorEdit);
+        if(professorTurma.isEmpty()){
+
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) textViewProfessorEdit.getLayoutParams();
+
+            textViewProfessorEdit.setText("Professor: (campo obrigatório)");
+            textViewProfessorEdit.setTextColor(Color.parseColor("#FF0000"));
+            params.setMarginEnd(dpToPx(35));
+            textViewProfessorEdit.setLayoutParams(params);
+            validacoesEditTurma = false;
+        } else {
+
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) textViewProfessorEdit.getLayoutParams();
+
+            textViewProfessorEdit.setText("Professor:");
+            textViewProfessorEdit.setTextColor(Color.parseColor("#000000"));
+            params.setMarginEnd(dpToPx(220));
+            textViewProfessorEdit.setLayoutParams(params);
+        }
+
+        if(validacoesEditTurma){
+
+            turma.setCodigo_turma(CodigoTurma);
+            turma.setSala(sala);
+            turma.setDisciplina(disciplina);
+            turma.setHorario(horario);
+            turma.setPeriodo(periodo);
+            turma.setDia_semana(diaSemana);
+            turma.setProfessor(professorTurma);
+            turma.setId(1);
+
+            turmaBD.updateTurma(turma);
+
+            setContentView(R.layout.ver_informacoes_turma_vprofessores);
+
+            TurmaVO turma2 = new TurmaVO();
+            TurmaDAO turmaBD2 = new TurmaDAO(this);
+
+            TextView TextViewCodigoTurma = (TextView) findViewById(R.id.textViewCodigoTurma);
+            TextViewCodigoTurma.setText(turmaBD2.getTurma(1).getCodigo_turma());
+
+            TextView TextViewSala = (TextView) findViewById(R.id.textViewSala);
+            TextViewSala.setText(turmaBD2.getTurma(1).getSala());
+
+            TextView TextViewDisciplina = (TextView) findViewById(R.id.textViewDisciplina);
+            TextViewDisciplina.setText(turmaBD2.getTurma(1).getDisciplina());
+
+            TextView TextViewHorario = (TextView) findViewById(R.id.textViewHorario);
+            TextViewHorario.setText(turmaBD2.getTurma(1).getHorario());
+
+            TextView TextViewPeriodo = (TextView) findViewById(R.id.textViewPeriodo);
+            TextViewPeriodo.setText(turmaBD2.getTurma(1).getPeriodo());
+
+            TextView TextViewDiaSemana = (TextView) findViewById(R.id.textViewDiaSemana);
+            TextViewDiaSemana.setText(turmaBD2.getTurma(1).getDia_semana());
+
+            TextView TextViewProfessorTurma = (TextView) findViewById(R.id.textViewProfessorTurma);
+            TextViewProfessorTurma.setText(turmaBD2.getTurma(1).getProfessor());
+
+        }
     }
 }

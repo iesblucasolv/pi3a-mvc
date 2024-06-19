@@ -32,12 +32,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView9"
+        android:id="@+id/textViewCodigoTurmaEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="170dp"
-        android:text="Código da turma"
+        android:text="Código da turma:"
+        android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,14 +56,15 @@
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView9" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewCodigoTurmaEdit" />
 
     <TextView
-        android:id="@+id/textView11"
+        android:id="@+id/textViewSalaEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="270dp"
         android:text="Sala:"
+        android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -80,14 +82,15 @@
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewSalaEdit" />
 
     <TextView
-        android:id="@+id/textView13"
+        android:id="@+id/textViewDisciplinaEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="220dp"
         android:text="Disciplina:"
+        android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -105,14 +108,15 @@
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView13" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewDisciplinaEdit" />
 
     <TextView
-        android:id="@+id/textView15"
+        android:id="@+id/textViewHorarioEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="240dp"
         android:text="Horário:"
+        android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -130,14 +134,15 @@
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView15" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewHorarioEdit" />
 
     <TextView
-        android:id="@+id/textView17"
+        android:id="@+id/textViewPeriodoEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="240dp"
         android:text="Período:"
+        android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -155,14 +160,15 @@
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView17" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewPeriodoEdit" />
 
     <TextView
-        android:id="@+id/textView23"
+        android:id="@+id/textViewDiaSemanaEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="180dp"
         android:text="Dia da semana:"
+        android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -180,14 +186,15 @@
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView23" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewDiaSemanaEdit" />
 
     <TextView
-        android:id="@+id/textView25"
+        android:id="@+id/textViewProfessorEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="220dp"
         android:text="Professor:"
+        android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -205,7 +212,7 @@
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView25" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewProfessorEdit" />
 
     <Button
         android:id="@+id/button7"
